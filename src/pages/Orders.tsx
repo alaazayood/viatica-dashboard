@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { Search, Filter, Loader2, AlertCircle, Eye, Truck } from 'lucide-react';
+import { Search, Loader2, AlertCircle, Eye, Truck } from 'lucide-react';
 
 interface Order {
   _id: string;
