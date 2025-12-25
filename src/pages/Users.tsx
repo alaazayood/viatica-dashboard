@@ -358,6 +358,14 @@ const Users = () => {
           </div>
         </div>
       )}
+      {/* Create User Modal */}
+      {isModalOpen && (
+        <CreateUserModal 
+          role={selectedRole} 
+          onClose={() => setIsModalOpen(false)} 
+          onSuccess={fetchUsers} 
+        />
+      )}
     </div>
   );
 };
