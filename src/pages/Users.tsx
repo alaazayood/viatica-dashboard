@@ -59,7 +59,7 @@ const CreateUserModal = ({ role, onClose, onSuccess }: { role: string; onClose: 
         <h3 className="text-xl font-bold mb-4">
           إضافة {role === 'driver' ? 'سائق' : role === 'warehouse' ? 'مستودع' : 'صيدلي'} جديد
         </h3>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
           <div>
             <label className="block text-sm font-medium mb-1">الاسم الكامل</label>
             <input 
@@ -68,6 +68,7 @@ const CreateUserModal = ({ role, onClose, onSuccess }: { role: string; onClose: 
               onChange={e => setName(e.target.value)}
               className="w-full p-2 border rounded-md" 
               placeholder="مثال: محمد السائق"
+              autoComplete="off"
             />
           </div>
           <div>
@@ -78,6 +79,7 @@ const CreateUserModal = ({ role, onClose, onSuccess }: { role: string; onClose: 
               onChange={e => setPhone(e.target.value)}
               className="w-full p-2 border rounded-md"
               placeholder="09..."
+              autoComplete="off"
             />
           </div>
           <div>
@@ -88,6 +90,7 @@ const CreateUserModal = ({ role, onClose, onSuccess }: { role: string; onClose: 
               value={password}
               onChange={e => setPassword(e.target.value)}
               className="w-full p-2 border rounded-md"
+              autoComplete="new-password"
             />
           </div>
           <div className="flex gap-2 justify-end mt-6">
