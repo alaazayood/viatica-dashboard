@@ -23,6 +23,89 @@ interface User {
   createdAt: string;
 }
 
+// Simple Modal for creating a user
+const CreateUserModal = ({ role, onClose, onSuccess }: { role: string; onClose: () => void; onSuccess: () => void }) => {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      // Using the generic register endpoint, forcing role and isVerified=true
+      await api.post('/auth/register', {
+        name,
+        phone,
+        password,
+        role,
+        isVerified: true, // Auto verify drivers
+        status: 'verified'
+      });
+      alert('تم إنشاء الحساب بنجاح');
+      onSuccess();
+      onClose();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'فشل الإنشاء');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+      <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl">
+        <h3 className="text-xl font-bold mb-4">
+          إضافة {role === 'driver' ? 'سائق' : role === 'warehouse' ? 'مستودع' : 'صيدلي'} جديد
+        </h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">الاسم الكامل</label>
+            <input 
+              required
+              value={name}
+              onChange={e => setName(e.target.value)}
+              className="w-full p-2 border rounded-md" 
+              placeholder="مثال: محمد السائق"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">رقم الهاتف</label>
+            <input 
+              required
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+              className="w-full p-2 border rounded-md"
+              placeholder="09..."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">كلمة المرور</label>
+            <input 
+              required
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+          <div className="flex gap-2 justify-end mt-6">
+            <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-bold text-gray-500 hover:bg-gray-100 rounded-md">إلغاء</button>
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="px-6 py-2 text-sm font-bold bg-primary text-white hover:bg-primary/90 rounded-md disabled:opacity-50"
+            >
+              {loading ? 'جاري الحفظ...' : 'حفظ'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 const Users = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +114,7 @@ const Users = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [aiInsight, setAiInsight] = useState<{ [key: string]: string }>({});
   const [scanningId, setScanningId] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -119,6 +203,19 @@ const Users = () => {
             المستودعات
           </button>
         </div>
+      </div>
+
+      {/* Action Bar */}
+      <div className="flex justify-end">
+        {selectedRole !== 'pharmacist' && (
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-primary/90 transition-all shadow-md"
+          >
+            <Zap className="w-4 h-4" />
+            إضافة {selectedRole === 'driver' ? 'سائق' : 'مستودع'} جديد
+          </button>
+        )}
       </div>
 
       {error && (
