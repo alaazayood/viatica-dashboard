@@ -270,13 +270,10 @@ const OrderDetails = () => {
                 )}
 
                 {order.status === 'confirmed' && (
-                   <button 
-                    onClick={() => handleUpdateStatus('assigned')}
-                    className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2"
-                   >
-                     <Truck className="w-4 h-4" />
-                     إرسال السائق للاستلام
-                   </button>
+                   <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl text-center">
+                     <p className="text-indigo-800 text-[10px] font-bold mb-2">لبدء التوصيل، يجب إسناد سائق أولاً</p>
+                     <p className="text-xs text-muted-foreground">استخدم قائمة "التحكم بالسائق" أعلاه</p>
+                   </div>
                 )}
 
                 {order.status === 'assigned' && (
