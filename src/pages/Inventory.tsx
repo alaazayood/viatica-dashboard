@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import api from '../services/api';
-import { Plus, Search, Filter, Loader2, AlertCircle, Pencil, Trash2, Upload, Download, Building2, Package, PackagePlus } from 'lucide-react';
+import { Plus, Search, Loader2, AlertCircle, Pencil, Trash2, Upload, Download, Building2, Package, PackagePlus } from 'lucide-react';
 import AddDrugModal from '../components/AddDrugModal';
 import { SmartImportModal } from '../components/SmartImportModal';
 import StockReplenishModal from '../components/StockReplenishModal';

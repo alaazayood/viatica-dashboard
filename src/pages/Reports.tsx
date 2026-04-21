@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { cn } from '../lib/utils';
 import { 
-  BarChart3, Calendar, Download, Search, Filter,
+  BarChart3, Calendar, Download, Filter,
   TrendingUp, Package, Banknote, Users
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
