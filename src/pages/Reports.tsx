@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { cn } from '../lib/utils';
 import { 
   BarChart3, Calendar, Download, Search, Filter,
-  TrendingUp, TrendingDown, Package, Banknote, Users
+  TrendingUp, Package, Banknote, Users
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 

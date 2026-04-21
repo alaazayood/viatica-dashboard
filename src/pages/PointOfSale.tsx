@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { cn } from '../lib/utils';
 import { 
-  ShoppingCart, Search, Trash2, UserSearch, AlertCircle, 
-  Check, Banknote, CreditCard, Loader2, X, Receipt
+  ShoppingCart, Search, Trash2, AlertCircle, 
+  Check, Banknote, CreditCard, Loader2, X
 } from 'lucide-react';
 import PrintInvoiceModal from '../components/PrintInvoiceModal';
 

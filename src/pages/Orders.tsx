@@ -10,12 +10,14 @@ import {
 
 interface Order {
   _id: string;
-  pharmacist: { name: string; phone?: string };
+  pharmacist: { name: string; phone?: string; pharmacyName?: string };
   warehouse: { name: string };
   driver?: { name: string };
   status: 'pending' | 'confirmed' | 'processing' | 'assigned' | 'out_for_delivery' | 'delivered' | 'cancelled';
   createdAt: string;
   drugs: { drug: string; quantity: number; price: number; isBonus?: boolean }[];
+  customerName?: string;
+  source?: string;
 }
 
 const statusConfig: Record<string, { label: string; icon: any; color: string; bg: string }> = {

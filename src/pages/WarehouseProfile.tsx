@@ -5,7 +5,7 @@ import {
   Building2, MapPin, Phone, FileText, Package,
   ShoppingCart, ArrowRight, Loader2, AlertCircle,
   Pencil, Check, X, Mail, User, Clock, TrendingUp,
-  ShieldCheck, BadgeCheck, Warehouse, DollarSign, UploadCloud, Image as ImageIcon
+  BadgeCheck, Warehouse, DollarSign, UploadCloud, Image as ImageIcon
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
@@ -378,7 +378,7 @@ const WarehouseProfile = () => {
               { icon: Package, label: 'أدوية مدرجة', value: stats.totalDrugs, color: 'from-indigo-500 to-indigo-700', light: 'bg-indigo-50 text-indigo-600' },
               { icon: ShoppingCart, label: 'إجمالي الطلبات', value: stats.totalOrders, color: 'from-emerald-500 to-emerald-700', light: 'bg-emerald-50 text-emerald-600' },
               { icon: Clock, label: 'طلبات معلقة', value: stats.pendingOrders, color: 'from-amber-400 to-orange-500', light: 'bg-amber-50 text-amber-600' },
-            ].map(({ icon: Icon, label, value, color, light }) => (
+            ].map(({ icon: Icon, label, value, light }) => (
               <div key={label} className="bg-white rounded-2xl border border-slate-100 shadow-lg p-5 hover:-translate-y-0.5 transition-transform">
                 <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mb-3", light)}>
                   <Icon className="w-5 h-5" />

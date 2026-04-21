@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { cn } from '../lib/utils';
 import {
   RotateCcw, Search, Package, AlertCircle, Check, X,
-  ChevronDown, ChevronUp, Loader2, Minus, Plus, Trash2
+  ChevronDown, ChevronUp, Loader2, Minus, Plus
 } from 'lucide-react';
 
 interface OrderDrug {
