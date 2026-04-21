@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Search, User, ShoppingBag, UserPlus } from 'lucide-react';
+import { Bell, Search, User, ShoppingBag, UserPlus, Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { cn } from '../lib/utils';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
-const Header = () => {
+const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   const { user, notifications, markRead, markAllRead } = useAuth();
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
@@ -14,9 +14,15 @@ const Header = () => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <header className="h-24 glass-card px-10 flex items-center justify-between sticky top-0 z-50 border-x-0 border-t-0 rounded-none shadow-none backdrop-blur-3xl bg-white/40 dark:bg-black/40">
-      <div className="flex items-center gap-6 flex-1">
-        <div className="relative group w-full max-w-md">
+    <header className="h-20 md:h-24 glass-card px-4 md:px-10 flex items-center justify-between sticky top-0 z-30 border-x-0 border-t-0 rounded-none shadow-none backdrop-blur-3xl bg-white/40 dark:bg-black/40">
+      <div className="flex items-center gap-4 flex-1">
+        <button 
+          onClick={onMenuClick}
+          className="lg:hidden p-2 text-slate-500 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+        <div className="relative group w-full max-w-md hidden md:block">
            <div className="absolute inset-0 bg-indigo-500/5 blur-xl group-focus-within:bg-indigo-500/10 transition-all rounded-2xl" />
            <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
            <input 

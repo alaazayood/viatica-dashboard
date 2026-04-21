@@ -17,7 +17,12 @@ import {
 import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
 
-const Sidebar = () => {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const { logout, user, notifications } = useAuth();
   
   const unreadOrderNotificationsCount = notifications?.filter(n => !n.read && (n.title.includes('طلب') || n.message.includes('طلب'))).length || 0;
@@ -46,7 +51,19 @@ const Sidebar = () => {
   const roleLabel = user?.role === 'warehouse' ? 'لوحة المستودع' : 'منصة الإدارة';
 
   return (
-    <aside className="w-72 glass-sidebar h-screen flex flex-col sticky top-0 z-40 border-l border-white/5 shadow-2xl shadow-indigo-500/5">
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm" 
+          onClick={onClose} 
+        />
+      )}
+      
+      <aside className={cn(
+        "w-72 glass-sidebar flex flex-col fixed lg:sticky top-0 z-50 h-[100dvh] border-l border-white/5 shadow-2xl shadow-indigo-500/5 transition-transform duration-300",
+        isOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
+      )}>
       <div className="p-10 border-b border-white/10 flex flex-col items-center justify-center gap-2">
         <h1 className="text-4xl font-black tracking-tighter gradient-text">VIATICA</h1>
         <div className="px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">
@@ -60,6 +77,7 @@ const Sidebar = () => {
       <nav className="flex-1 p-6 space-y-3 mt-4">
         {navItems.map((item) => (
           <NavLink
+            onClick={() => onClose && onClose()}
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
@@ -96,6 +114,7 @@ const Sidebar = () => {
         </button>
       </div>
     </aside>
+    </>
   );
 };
 
