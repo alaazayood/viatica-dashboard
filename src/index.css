@@ -106,3 +106,27 @@
     @apply bg-clip-text text-transparent bg-gradient-to-br from-indigo-500 to-emerald-500 font-bold;
   }
 }
+
+/* ═══ Print Styles ═══ */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #printable-invoice,
+  #printable-invoice * {
+    visibility: visible !important;
+  }
+  #printable-invoice {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    padding: 20mm !important;
+    margin: 0 !important;
+  }
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}

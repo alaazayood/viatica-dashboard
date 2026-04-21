@@ -1,47 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, Search, User, ShoppingBag, UserPlus } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { cn } from '../lib/utils';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
-interface Notification {
-  _id: string;
-  title: string;
-  message: string;
-  read: boolean;
-  createdAt: string;
-}
-
 const Header = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { user, notifications, markRead, markAllRead } = useAuth();
+  const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
 
-  const unreadCount = notifications.filter((n: Notification) => !n.read).length;
-
-  const fetchNotifications = async () => {
-    try {
-      const response = await api.get('/notifications');
-      setNotifications(response.data.data.notifications);
-    } catch (err) {
-      console.error('Error fetching notifications:', err);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const markRead = async (id: string) => {
-    try {
-      await api.patch(`/notifications/${id}/read`);
-      setNotifications(notifications.map((n: Notification) => n._id === id ? { ...n, read: true } : n));
-    } catch (err) {
-      console.error('Error marking read:', err);
-    }
-  };
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
     <header className="h-24 glass-card px-10 flex items-center justify-between sticky top-0 z-50 border-x-0 border-t-0 rounded-none shadow-none backdrop-blur-3xl bg-white/40 dark:bg-black/40">
@@ -90,10 +61,7 @@ const Header = () => {
                   </div>
                   {unreadCount > 0 && (
                      <button 
-                      onClick={async () => {
-                        await api.patch('/notifications/mark-all-read');
-                        fetchNotifications();
-                      }}
+                      onClick={() => markAllRead()}
                       className="text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-600 px-3 py-1 bg-indigo-500/10 rounded-full transition-colors"
                      >
                        تصفير الكل
@@ -113,7 +81,15 @@ const Header = () => {
                     notifications.map((n) => (
                       <div 
                         key={n._id} 
-                        onClick={() => markRead(n._id)}
+                        onClick={() => {
+                          markRead(n._id);
+                          setShowNotifications(false);
+                          if (n.title.includes('طلب') || n.message.includes('طلب')) {
+                            navigate('/orders');
+                          } else if (n.title.includes('انضمام')) {
+                            navigate('/users');
+                          }
+                        }}
                         className={cn(
                           "p-5 hover:bg-white/30 dark:hover:bg-white/5 transition-all cursor-pointer flex gap-4 border-r-4",
                           !n.read ? "border-indigo-500 bg-indigo-500/5" : "border-transparent"
@@ -158,8 +134,12 @@ const Header = () => {
 
         <div className="flex items-center gap-4 group cursor-pointer hover:bg-white/30 dark:hover:bg-white/5 p-2 rounded-2xl transition-all border border-transparent hover:border-white/10">
           <div className="text-left hidden lg:block pr-2">
-            <p className="text-xs font-black uppercase tracking-wider text-right">أهلاً، المسؤول</p>
-            <p className="text-[10px] text-muted-foreground font-bold">مدير النظام الرئيسي</p>
+            <p className="text-xs font-black uppercase tracking-wider text-right">أهلاً، {user?.name?.split(' ')[0] || 'المستخدم'}</p>
+            <p className="text-[10px] text-muted-foreground font-bold text-right pt-0.5">
+              {user?.role === 'admin' ? 'مدير النظام الرئيسي' : 
+               user?.role === 'warehouse' ? 'إدارة المستودع' : 
+               user?.role === 'pharmacist' ? 'صيدلاني' : 'مستخدم'}
+            </p>
           </div>
           <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
             <User className="w-6 h-6" />

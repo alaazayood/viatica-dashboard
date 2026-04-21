@@ -8,6 +8,12 @@ import Orders from './pages/Orders';
 import OrderDetails from './pages/OrderDetails';
 import Users from './pages/Users';
 import Offers from './pages/Offers';
+import WarehouseProfile from './pages/WarehouseProfile';
+import Finance from './pages/Finance';
+import PointOfSale from './pages/PointOfSale';
+import Reports from './pages/Reports';
+import Returns from './pages/Returns';
+import FeedManagement from './pages/FeedManagement';
 
 // Protected Route Wrapper
 const ProtectedRoute = () => {
@@ -34,7 +40,13 @@ function App() {
               <Route path="orders" element={<Orders />} />
               <Route path="orders/:id" element={<OrderDetails />} />
               <Route path="users" element={<Users />} />
+              <Route path="warehouse/:id" element={<WarehouseProfile />} />
               <Route path="offers" element={<Offers />} />
+              <Route path="finance" element={<Finance />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="returns" element={<Returns />} />
+              <Route path="pos" element={<PointOfSale />} />
+              <Route path="feed" element={<FeedManagement />} />
               {/* Add other protected routes here */}
               <Route path="*" element={<div className="p-10 text-center">جاري العمل على هذه الصفحة...</div>} />
             </Route>

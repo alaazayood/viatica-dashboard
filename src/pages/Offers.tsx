@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
-import { Plus, Trash2, Loader2, AlertCircle, Clock, CheckCircle } from 'lucide-react';
+import { Plus, Trash2, Loader2, AlertCircle, Clock, CheckCircle, Check } from 'lucide-react';
+import { cn } from '../lib/utils';
 import AddOfferModal from '../components/AddOfferModal';
 
 interface Offer {
@@ -23,6 +24,12 @@ const Offers = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const showToast = (type: 'success' | 'error', text: string) => {
+    setToast({ type, text });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     fetchOffers();
@@ -42,17 +49,28 @@ const Offers = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('هل أنت متأكد من حذف هذا العرض؟')) return;
     try {
       await api.delete(`/offers/${id}`);
       setOffers(offers.filter(o => o._id !== id));
+      showToast('success', 'تم حذف العرض بنجاح ✓');
     } catch (err) {
-      alert('فشل حذف العرض');
+      showToast('error', 'فشل حذف العرض');
     }
   };
 
   return (
     <div className="space-y-6">
+      {/* Floating Toast */}
+      {toast && (
+        <div className={cn(
+          "fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-6 py-3 rounded-full shadow-2xl font-bold text-sm transition-all",
+          toast.type === 'success' ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
+        )}>
+          {toast.type === 'success' ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+          {toast.text}
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">إدارة العروض والخصومات</h1>
         <button 

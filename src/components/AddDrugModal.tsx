@@ -13,6 +13,8 @@ interface Drug {
   category: string;
   expiryDate: string;
   batchNumber: string;
+  dosage?: string;
+  dosageForm?: string;
 }
 
 interface AddDrugModalProps {
@@ -34,7 +36,9 @@ const AddDrugModal: React.FC<AddDrugModalProps> = ({ isOpen, onClose, onSuccess,
     quantity: '',
     category: 'other',
     expiryDate: '',
-    batchNumber: ''
+    batchNumber: '',
+    dosage: '',
+    dosageForm: 'Tablet'
   });
 
   useEffect(() => {
@@ -48,7 +52,9 @@ const AddDrugModal: React.FC<AddDrugModalProps> = ({ isOpen, onClose, onSuccess,
         quantity: drugToEdit.quantity.toString(),
         category: drugToEdit.category,
         expiryDate: drugToEdit.expiryDate.split('T')[0], // Format date for input
-        batchNumber: drugToEdit.batchNumber
+        batchNumber: drugToEdit.batchNumber,
+        dosage: drugToEdit.dosage || '',
+        dosageForm: drugToEdit.dosageForm || 'Tablet'
       });
     } else {
       setFormData({
@@ -60,7 +66,9 @@ const AddDrugModal: React.FC<AddDrugModalProps> = ({ isOpen, onClose, onSuccess,
         quantity: '',
         category: 'other',
         expiryDate: '',
-        batchNumber: ''
+        batchNumber: '',
+        dosage: '',
+        dosageForm: 'Tablet'
       });
     }
   }, [drugToEdit, isOpen]);
@@ -145,6 +153,38 @@ const AddDrugModal: React.FC<AddDrugModalProps> = ({ isOpen, onClose, onSuccess,
                 className="w-full px-3 py-2 rounded-md border border-input bg-background"
               />
             </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">العيار (الجرعة)</label>
+              <input
+                name="dosage"
+                required
+                value={formData.dosage}
+                onChange={handleChange}
+                className="w-full px-3 py-2 rounded-md border border-input bg-background"
+                placeholder="مثال: 500mg"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">الشكل الصيدلاني</label>
+              <select
+                name="dosageForm"
+                required
+                value={formData.dosageForm}
+                onChange={handleChange}
+                className="w-full px-3 py-2 rounded-md border border-input bg-background"
+              >
+                <option value="Tablet">حبوب (Tablet)</option>
+                <option value="Capsule">كبسول (Capsule)</option>
+                <option value="Syrup">شراب (Syrup)</option>
+                <option value="Injection">حقن (Injection)</option>
+                <option value="Ointment">مرهم (Ointment)</option>
+                <option value="Cream">كريم (Cream)</option>
+                <option value="Drops">قطرات (Drops)</option>
+                <option value="Other">أخرى</option>
+              </select>
+            </div>
             
             <div className="space-y-2">
               <label className="text-sm font-medium">التصنيف</label>
@@ -158,6 +198,7 @@ const AddDrugModal: React.FC<AddDrugModalProps> = ({ isOpen, onClose, onSuccess,
                 <option value="antibiotic">مضادات حيوية (Antibiotic)</option>
                 <option value="antihistamine">مضادات الحساسية (Antihistamine)</option>
                 <option value="cardiovascular">أدوية القلب (Cardiovascular)</option>
+                <option value="cosmetics">تجميل / عناية بالبشرة (Cosmetics)</option>
                 <option value="other">أخرى</option>
               </select>
             </div>

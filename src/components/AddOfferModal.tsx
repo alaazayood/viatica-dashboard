@@ -141,6 +141,8 @@ const AddOfferModal: React.FC<AddOfferModalProps> = ({ isOpen, onClose, onSucces
                <label className="text-sm font-bold text-blue-700">نسبة الخصم (%)</label>
                <input 
                 type="number"
+                max="100"
+                min="1"
                 placeholder="مثال: 15"
                 className="w-full p-2.5 rounded-lg border border-blue-200 bg-background text-sm"
                 value={formData.discountPercentage}

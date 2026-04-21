@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { ArrowRight, Calendar, MapPin, User, Package, Truck, Loader2, Check, X } from 'lucide-react';
+import { ArrowRight, Calendar, MapPin, User, Package, Truck, Loader2, Check, X, AlertCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useAuth } from '../context/AuthContext';
 
 interface OrderDetail {
   _id: string;
@@ -25,11 +26,18 @@ interface Driver {
 const OrderDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
   const [assigning, setAssigning] = useState(false);
   const [selectedDriver, setSelectedDriver] = useState('');
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const showToast = (type: 'success' | 'error', text: string) => {
+    setToast({ type, text });
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     fetchOrderDetails();
@@ -45,7 +53,7 @@ const OrderDetails = () => {
       }
     } catch (error) {
       console.error("Error fetching order:", error);
-      alert('فشل تحميل تفاصيل الطلب');
+      showToast('error', 'فشل تحميل تفاصيل الطلب');
     } finally {
       setLoading(false);
     }
@@ -62,15 +70,13 @@ const OrderDetails = () => {
 
 
   const handleUpdateStatus = async (newStatus: string) => {
-    if (!window.confirm(`هل أنت متأكد من ${newStatus === 'processing' ? 'قبول' : 'رفض'} هذا الطلب؟`)) return;
-    
     try {
       await api.patch(`/orders/${id}/status`, { status: newStatus });
-      alert(`تم ${newStatus === 'processing' ? 'قبول' : 'رفض'} الطلب بنجاح`);
+      showToast('success', 'تم تحديث حالة الطلب بنجاح ✓');
       fetchOrderDetails();
     } catch (error) {
       console.error("Error updating status:", error);
-      alert('فشل تحديث حالة الطلب');
+      showToast('error', 'فشل تحديث حالة الطلب');
     }
   };
 
@@ -79,6 +85,17 @@ const OrderDetails = () => {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
+      {/* Floating Toast */}
+      {toast && (
+        <div className={cn(
+          "fixed top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-6 py-3 rounded-full shadow-2xl font-bold text-sm",
+          toast.type === 'success' ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
+        )}>
+          {toast.type === 'success' ? <Check className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+          {toast.text}
+        </div>
+      )}
+
       <button onClick={() => navigate('/orders')} className="flex items-center text-muted-foreground hover:text-primary transition-colors mb-4">
         <ArrowRight className="w-4 h-4 ml-1" />
         العودة للطلبات
@@ -97,7 +114,7 @@ const OrderDetails = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                {order.status === 'pending' && (
+                {order.status === 'pending' && user?.role !== 'admin' && (
                   <button 
                     onClick={() => handleUpdateStatus('cancelled')}
                     className="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-md hover:bg-red-100 transition-colors text-sm font-bold flex items-center gap-2"
@@ -208,109 +225,111 @@ const OrderDetails = () => {
           </div>
         </div>
 
-        {/* Sidebar Actions */}
-        <div className="w-full md:w-80 space-y-6">
-          <div className="glass-card rounded-3xl p-6 border border-white/10 shadow-xl">
-            <h3 className="font-black text-sm uppercase mb-4 flex items-center gap-2 tracking-widest">
-              <Truck className="w-4 h-4 text-primary" />
-              إدارة العمليات
-            </h3>
-            
-            <div className="space-y-4">
-              {/* Driver Assignment Section (Only if not delivered/cancelled) */}
-              {order.status !== 'delivered' && order.status !== 'cancelled' && (
-                <div className="space-y-3 pb-4 border-b border-white/5">
-                  <label className="text-[10px] items-center gap-1 font-black text-muted-foreground uppercase tracking-widest flex">
-                    التحكم بالسائق
+        {/* Sidebar Actions (Only visible to non-admins, i.e., warehouses) */}
+        {user?.role !== 'admin' && (
+          <div className="w-full md:w-80 space-y-6">
+            <div className="glass-card rounded-3xl p-6 border border-white/10 shadow-xl">
+              <h3 className="font-black text-sm uppercase mb-4 flex items-center gap-2 tracking-widest">
+                <Truck className="w-4 h-4 text-primary" />
+                إدارة العمليات
+              </h3>
+              
+              <div className="space-y-4">
+                {/* Driver Assignment Section (Only if not delivered/cancelled) */}
+                {order.status !== 'delivered' && order.status !== 'cancelled' && (
+                  <div className="space-y-3 pb-4 border-b border-white/5">
+                    <label className="text-[10px] items-center gap-1 font-black text-muted-foreground uppercase tracking-widest flex">
+                      التحكم بالسائق
+                    </label>
+                    <select 
+                      className="w-full p-3 rounded-xl border border-white/10 bg-white/5 font-bold text-xs focus:ring-2 focus:ring-primary outline-none appearance-none"
+                      value={selectedDriver}
+                      onChange={(e) => setSelectedDriver(e.target.value)}
+                    >
+                      <option value="">-- اختر سائق --</option>
+                      {drivers.map(driver => (
+                        <option key={driver._id} value={driver._id}>{driver.name}</option>
+                      ))}
+                    </select>
+                    <button 
+                      onClick={async () => {
+                        if (!selectedDriver) return showToast('error', 'يرجى اختيار سائق أولاً');
+                        setAssigning(true);
+                        try {
+                          await api.patch(`/orders/${id}/assign-driver`, { driverId: selectedDriver });
+                          showToast('success', 'تم تخصيص السائق بنجاح ✓');
+                          fetchOrderDetails();
+                        } catch (error) { showToast('error', 'فشل التخصيص'); } 
+                        finally { setAssigning(false); }
+                      }}
+                      disabled={assigning || !selectedDriver}
+                      className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                    >
+                      {assigning ? <Loader2 className="w-3 h-3 animate-spin" /> : <User className="w-3 h-3" />}
+                      تغيير السائق
+                    </button>
+                  </div>
+                )}
+
+                {/* Status Stepper - Smart Actions */}
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block">
+                    الإجراء التالي
                   </label>
-                  <select 
-                    className="w-full p-3 rounded-xl border border-white/10 bg-white/5 font-bold text-xs focus:ring-2 focus:ring-primary outline-none appearance-none"
-                    value={selectedDriver}
-                    onChange={(e) => setSelectedDriver(e.target.value)}
-                  >
-                    <option value="">-- اختر سائق --</option>
-                    {drivers.map(driver => (
-                      <option key={driver._id} value={driver._id}>{driver.name}</option>
-                    ))}
-                  </select>
-                  <button 
-                    onClick={async () => {
-                      if (!selectedDriver) return alert('يرجى اختيار سائق أولاً');
-                      setAssigning(true);
-                      try {
-                        await api.patch(`/orders/${id}/assign-driver`, { driverId: selectedDriver });
-                        alert('تم تخصيص السائق بنجاح');
-                        fetchOrderDetails();
-                      } catch (error) { alert('فشل التخصيص'); } 
-                      finally { setAssigning(false); }
-                    }}
-                    disabled={assigning || !selectedDriver}
-                    className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
-                  >
-                    {assigning ? <Loader2 className="w-3 h-3 animate-spin" /> : <User className="w-3 h-3" />}
-                    تغيير السائق
-                  </button>
+
+                  {order.status === 'pending' && (
+                     <button 
+                      onClick={() => handleUpdateStatus('confirmed')}
+                      className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2"
+                     >
+                       <Check className="w-4 h-4" />
+                       تأكيد الطلب وبدء التجهيز
+                     </button>
+                  )}
+
+                  {order.status === 'confirmed' && (
+                     <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl text-center">
+                       <p className="text-indigo-800 text-[10px] font-bold mb-2">لبدء التوصيل، يجب إسناد سائق أولاً</p>
+                       <p className="text-xs text-muted-foreground">استخدم قائمة "التحكم بالسائق" أعلاه</p>
+                     </div>
+                  )}
+
+                  {order.status === 'assigned' && (
+                     <button 
+                      onClick={() => handleUpdateStatus('out_for_delivery')}
+                      className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2"
+                     >
+                       <Truck className="w-4 h-4" />
+                       بدء التوصيل الفعلي
+                     </button>
+                  )}
+
+                  {order.status === 'out_for_delivery' && (
+                     <button 
+                      onClick={() => handleUpdateStatus('delivered')}
+                      className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
+                     >
+                       <Check className="w-4 h-4" />
+                       تأكيد إتمام التسليم
+                     </button>
+                  )}
+
+                  {order.status === 'delivered' && (
+                    <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-600 text-[10px] font-black text-center uppercase tracking-widest">
+                      ✅ تم إغلاق الطلب وتحصيل المبلغ
+                    </div>
+                  )}
+
+                  {order.status === 'cancelled' && (
+                    <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-600 text-[10px] font-black text-center uppercase tracking-widest">
+                      🛑 الطلب ملغي
+                    </div>
+                  )}
                 </div>
-              )}
-
-              {/* Status Stepper - Smart Actions */}
-              <div className="space-y-3">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest block">
-                  الإجراء التالي
-                </label>
-
-                {order.status === 'pending' && (
-                   <button 
-                    onClick={() => handleUpdateStatus('confirmed')}
-                    className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2"
-                   >
-                     <Check className="w-4 h-4" />
-                     تأكيد الطلب وبدء التجهيز
-                   </button>
-                )}
-
-                {order.status === 'confirmed' && (
-                   <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl text-center">
-                     <p className="text-indigo-800 text-[10px] font-bold mb-2">لبدء التوصيل، يجب إسناد سائق أولاً</p>
-                     <p className="text-xs text-muted-foreground">استخدم قائمة "التحكم بالسائق" أعلاه</p>
-                   </div>
-                )}
-
-                {order.status === 'assigned' && (
-                   <button 
-                    onClick={() => handleUpdateStatus('out_for_delivery')}
-                    className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2"
-                   >
-                     <Truck className="w-4 h-4" />
-                     بدء التوصيل الفعلي
-                   </button>
-                )}
-
-                {order.status === 'out_for_delivery' && (
-                   <button 
-                    onClick={() => handleUpdateStatus('delivered')}
-                    className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2"
-                   >
-                     <Check className="w-4 h-4" />
-                     تأكيد إتمام التسليم
-                   </button>
-                )}
-
-                {order.status === 'delivered' && (
-                  <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-600 text-[10px] font-black text-center uppercase tracking-widest">
-                    ✅ تم إغلاق الطلب وتحصيل المبلغ
-                  </div>
-                )}
-
-                {order.status === 'cancelled' && (
-                  <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-600 text-[10px] font-black text-center uppercase tracking-widest">
-                    🛑 الطلب ملغي
-                  </div>
-                )}
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
