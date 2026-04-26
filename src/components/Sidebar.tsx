@@ -12,7 +12,9 @@ import {
   Store,
   BarChart3,
   RotateCcw,
-  Activity
+  Activity,
+  ShieldAlert,
+  Receipt
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
@@ -40,6 +42,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { icon: BarChart3, label: 'التقارير والمبيعات', path: '/reports', roles: ['warehouse'] },
     { icon: RotateCcw, label: 'المرتجعات', path: '/returns', roles: ['warehouse'] },
     { icon: Activity, label: 'نبض المنصة', path: '/feed', roles: ['admin', 'warehouse'] },
+    { icon: ShieldAlert, label: 'التنبيهات', path: '/alerts', roles: ['admin', 'warehouse'] },
+    { icon: Receipt, label: 'المصاريف', path: '/expenses', roles: ['admin', 'warehouse'] },
     { icon: Bell, label: 'الإشعارات', path: '/notifications', roles: ['admin', 'warehouse'] },
   ];
 
