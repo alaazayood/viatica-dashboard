@@ -61,20 +61,20 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       )}
       
       <aside className={cn(
-        "w-72 glass-sidebar flex flex-col fixed lg:sticky top-0 z-50 h-[100dvh] border-l border-white/5 shadow-2xl shadow-indigo-500/5 transition-transform duration-300",
+        "w-72 glass-sidebar flex flex-col fixed lg:sticky top-0 z-50 h-[100dvh] border-l border-white/5 shadow-2xl shadow-indigo-500/5 transition-transform duration-300 overflow-hidden",
         isOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
       )}>
-      <div className="p-10 border-b border-white/10 flex flex-col items-center justify-center gap-2">
-        <h1 className="text-4xl font-black tracking-tighter gradient-text">VIATICA</h1>
-        <div className="px-3 py-1 bg-indigo-500/10 rounded-full border border-indigo-500/20">
+      <div className="p-6 border-b border-white/10 flex flex-col items-center justify-center gap-1.5 shrink-0">
+        <h1 className="text-3xl font-black tracking-tighter gradient-text">VIATICA</h1>
+        <div className="px-3 py-0.5 bg-indigo-500/10 rounded-full border border-indigo-500/20">
            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">{roleLabel}</p>
         </div>
         {user?.name && (
-          <p className="text-[11px] text-slate-400 font-medium mt-1">👋 {user.name}</p>
+          <p className="text-[11px] text-slate-400 font-medium">👋 {user.name}</p>
         )}
       </div>
 
-      <nav className="flex-1 p-6 space-y-3 mt-4">
+      <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 mt-2 scrollbar-thin">
         {navItems.map((item) => (
           <NavLink
             onClick={() => onClose && onClose()}
@@ -82,21 +82,21 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             to={item.path}
             className={({ isActive }) =>
               cn(
-                "flex items-center justify-between px-5 py-4 rounded-2xl transition-all duration-300 text-sm font-black uppercase tracking-wide group",
+                "flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-sm font-bold tracking-wide group",
                 isActive
-                  ? "bg-indigo-600 text-white shadow-xl shadow-indigo-600/20 scale-[1.03]"
-                  : "text-slate-400 hover:bg-white/5 hover:text-indigo-400 hover:translate-x-2"
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                  : "text-slate-400 hover:bg-white/5 hover:text-indigo-400"
               )
             }
           >
-            <div className="flex items-center gap-4">
-              <item.icon className={cn("w-5 h-5", "group-hover:scale-110 transition-transform")} />
-              {item.label}
+            <div className="flex items-center gap-3">
+              <item.icon className={cn("w-5 h-5 shrink-0", "group-hover:scale-110 transition-transform")} />
+              <span className="truncate">{item.label}</span>
             </div>
             
             {/* Notification Badge for Orders Tab */}
             {item.path === '/orders' && unreadOrderNotificationsCount > 0 && (
-              <span className="flex items-center justify-center w-6 h-6 bg-rose-500 text-white text-[10px] font-black rounded-lg shadow-lg">
+              <span className="flex items-center justify-center w-5 h-5 bg-rose-500 text-white text-[9px] font-black rounded-md shadow-lg shrink-0">
                 {unreadOrderNotificationsCount}
               </span>
             )}
@@ -104,12 +104,12 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         ))}
       </nav>
 
-      <div className="p-6 border-t border-white/10 bg-white/5">
+      <div className="p-4 border-t border-white/10 bg-white/5 shrink-0">
         <button 
           onClick={logout}
-          className="flex items-center gap-4 px-5 py-4 w-full rounded-2xl text-slate-400 hover:bg-rose-500 hover:text-white transition-all duration-300 text-sm font-black uppercase tracking-widest group shadow-sm hover:shadow-rose-500/20"
+          className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-slate-400 hover:bg-rose-500 hover:text-white transition-all duration-200 text-sm font-bold tracking-wide group"
         >
-          <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          <LogOut className="w-5 h-5 shrink-0" />
           تسجيل الخروج
         </button>
       </div>
