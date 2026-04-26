@@ -8,6 +8,7 @@ interface Drug {
   genericName: string;
   manufacturer: string;
   price: number;
+  costPrice?: number;
   priceUSD?: number;
   quantity: number;
   category: string;
@@ -26,11 +27,12 @@ interface AddDrugModalProps {
 
 const AddDrugModal: React.FC<AddDrugModalProps> = ({ isOpen, onClose, onSuccess, drugToEdit }) => {
   const [loading, setLoading] = useState(false);
-  const [exchangeRate, setExchangeRate] = useState(15000);
   const [formData, setFormData] = useState({
     name: '',
     genericName: '',
     manufacturer: '',
+    costPrice: '',
+    profitMargin: '20', // Default 20%
     priceUSD: '',
     price: '',
     quantity: '',
@@ -47,6 +49,10 @@ const AddDrugModal: React.FC<AddDrugModalProps> = ({ isOpen, onClose, onSuccess,
         name: drugToEdit.name,
         genericName: drugToEdit.genericName,
         manufacturer: drugToEdit.manufacturer,
+        costPrice: drugToEdit.costPrice?.toString() || '',
+        profitMargin: drugToEdit.costPrice && drugToEdit.price 
+          ? (((drugToEdit.price - drugToEdit.costPrice) / drugToEdit.costPrice) * 100).toFixed(1) 
+          : '20',
         priceUSD: drugToEdit.priceUSD?.toString() || '',
         price: drugToEdit.price.toString(),
         quantity: drugToEdit.quantity.toString(),
@@ -61,6 +67,8 @@ const AddDrugModal: React.FC<AddDrugModalProps> = ({ isOpen, onClose, onSuccess,
         name: '',
         genericName: '',
         manufacturer: '',
+        costPrice: '',
+        profitMargin: '20',
         priceUSD: '',
         price: '',
         quantity: '',
@@ -75,11 +83,25 @@ const AddDrugModal: React.FC<AddDrugModalProps> = ({ isOpen, onClose, onSuccess,
 
   // Auto-calculate SYP price when USD or Rate changes
   useEffect(() => {
-    if (formData.priceUSD && exchangeRate) {
-      const sypPrice = parseFloat(formData.priceUSD) * exchangeRate;
+    if (formData.priceUSD) {
+      const sypPrice = parseFloat(formData.priceUSD) * 15000;
       setFormData(prev => ({ ...prev, price: sypPrice.toString() }));
     }
-  }, [formData.priceUSD, exchangeRate]);
+  }, [formData.priceUSD]);
+
+  // Auto-calculate Price based on Cost and Profit Margin
+  useEffect(() => {
+    // Only run if costPrice is entered and we are focusing on cost or margin
+    if (formData.costPrice && formData.profitMargin) {
+      const cost = parseFloat(formData.costPrice);
+      const margin = parseFloat(formData.profitMargin);
+      if (!isNaN(cost) && !isNaN(margin)) {
+        const calculatedPrice = cost + (cost * margin / 100);
+        // Avoid overwriting if user is manually typing price (we can trust the last edited field, but simpler is to just set it)
+        setFormData(prev => ({ ...prev, price: Math.round(calculatedPrice).toString() }));
+      }
+    }
+  }, [formData.costPrice, formData.profitMargin]);
 
   if (!isOpen) return null;
 
@@ -203,42 +225,51 @@ const AddDrugModal: React.FC<AddDrugModalProps> = ({ isOpen, onClose, onSuccess,
               </select>
             </div>
 
-            {/* Currency Section */}
-            <div className="col-span-full grid grid-cols-1 md:grid-cols-3 gap-4 bg-muted/30 p-4 rounded-lg border border-border">
+            {/* Pricing Section */}
+            <div className="col-span-full grid grid-cols-1 md:grid-cols-3 gap-4 bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-blue-600">السعر بالدولار ($)</label>
+                <label className="text-sm font-bold text-slate-700">سعر التكلفة (ل.س)</label>
                 <input
-                  name="priceUSD"
+                  name="costPrice"
                   type="number"
                   min="0"
-                  step="0.01"
-                  value={formData.priceUSD}
+                  value={formData.costPrice}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-md border border-blue-200 bg-background focus:ring-blue-500"
-                  placeholder="0.00"
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white focus:ring-emerald-500 font-bold"
+                  placeholder="مثال: 1000"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium flex items-center gap-2">
-                  <Calculator className="w-4 h-4" />
-                  سعر الصرف
+                <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                  <Calculator className="w-4 h-4 text-emerald-600" />
+                  نسبة الربح المستهدفة (%)
                 </label>
                 <input
+                  name="profitMargin"
                   type="number"
-                  value={exchangeRate}
-                  onChange={(e) => setExchangeRate(Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-md border border-input bg-background"
+                  value={formData.profitMargin}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-white font-bold text-emerald-700"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-green-600">السعر النهائي (ل.س)</label>
+                <label className="text-sm font-black text-emerald-700">سعر البيع النهائي (ل.س)</label>
                 <input
                   name="price"
                   type="number"
                   required
-                  readOnly
                   value={formData.price}
-                  className="w-full px-3 py-2 rounded-md border border-green-200 bg-green-50/50 font-bold text-green-700"
+                  onChange={(e) => {
+                    // Reverse calculation if user manually types the final price
+                    const newPrice = parseFloat(e.target.value);
+                    const cost = parseFloat(formData.costPrice);
+                    let newMargin = formData.profitMargin;
+                    if (!isNaN(newPrice) && !isNaN(cost) && cost > 0) {
+                      newMargin = (((newPrice - cost) / cost) * 100).toFixed(1);
+                    }
+                    setFormData(prev => ({ ...prev, price: e.target.value, profitMargin: newMargin }));
+                  }}
+                  className="w-full px-3 py-2.5 rounded-lg border-2 border-emerald-400 bg-white font-black text-emerald-700 text-lg shadow-sm"
                 />
               </div>
             </div>

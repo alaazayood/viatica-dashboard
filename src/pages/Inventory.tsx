@@ -12,6 +12,7 @@ interface Drug {
   genericName: string;
   manufacturer: string;
   price: number;
+  costPrice?: number;
   priceUSD?: number;
   quantity: number;
   category: string;
@@ -239,7 +240,8 @@ const Inventory = () => {
                   {isAdmin && <th className="px-4 py-4">المستودع</th>}
                   <th className="px-4 py-4">الشركة المصنعة</th>
                   <th className="px-4 py-4">التصنيف</th>
-                  <th className="px-4 py-4">السعر</th>
+                  <th className="px-4 py-4 text-emerald-700">سعر البيع</th>
+                  <th className="px-4 py-4 text-orange-700">التكلفة (الشراء)</th>
                   <th className="px-4 py-4">الكمية</th>
                   <th className="px-4 py-4">إجراءات</th>
                 </tr>
@@ -266,8 +268,11 @@ const Inventory = () => {
                           {drug.category}
                         </span>
                       </td>
-                      <td className="px-4 py-4 font-black tracking-tight text-primary">
+                      <td className="px-4 py-4 font-black tracking-tight text-emerald-600">
                         {new Intl.NumberFormat('ar-SY', { style: 'currency', currency: 'SYP' }).format(drug.price)}
+                      </td>
+                      <td className="px-4 py-4 font-black tracking-tight text-orange-600">
+                        {drug.costPrice ? new Intl.NumberFormat('ar-SY', { style: 'currency', currency: 'SYP' }).format(drug.costPrice) : '---'}
                       </td>
                       <td className="px-4 py-4">
                         <span className={`inline-flex px-2.5 py-1 rounded-md text-xs font-black
