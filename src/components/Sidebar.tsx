@@ -42,6 +42,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { icon: User, label: 'الملف الشخصي', path: '/warehouse/me', roles: ['warehouse'] },
     { icon: DollarSign, label: 'الحسابات المالية', path: '/finance', roles: ['warehouse'] },
     { icon: BarChart3, label: 'التقارير والمبيعات', path: '/reports', roles: ['warehouse'] },
+    { icon: Activity, label: 'الأرباح والخسائر', path: '/profit-loss', roles: ['warehouse', 'admin'] },
     { icon: RotateCcw, label: 'المرتجعات', path: '/returns', roles: ['warehouse'] },
     { icon: Activity, label: 'نبض المنصة', path: '/feed', roles: ['admin', 'warehouse'] },
     { icon: ShieldAlert, label: 'التنبيهات', path: '/alerts', roles: ['admin', 'warehouse'] },

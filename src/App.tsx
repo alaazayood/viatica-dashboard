@@ -18,6 +18,7 @@ import Alerts from './pages/Alerts';
 import Expenses from './pages/Expenses';
 import Purchases from './pages/Purchases';
 import Suppliers from './pages/Suppliers';
+import ProfitLoss from './pages/ProfitLoss';
 
 // Protected Route Wrapper
 const ProtectedRoute = () => {
@@ -55,6 +56,7 @@ function App() {
               <Route path="expenses" element={<Expenses />} />
               <Route path="purchases" element={<Purchases />} />
               <Route path="suppliers" element={<Suppliers />} />
+              <Route path="profit-loss" element={<ProfitLoss />} />
               {/* Add other protected routes here */}
               <Route path="*" element={<div className="p-10 text-center">جاري العمل على هذه الصفحة...</div>} />
             </Route>

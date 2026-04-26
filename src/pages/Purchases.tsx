@@ -71,7 +71,19 @@ const Purchases = () => {
     setCreatingDrug(true);
     try {
       // Create drug with quantity 0 (initial master data)
-      const res = await api.post('/drugs', { ...quickDrug, price: Number(quickDrug.price), quantity: 0, packingSize: Number(quickDrug.packingSize) || 1 });
+      const res = await api.post('/drugs', { 
+        ...quickDrug, 
+        price: Number(quickDrug.price), 
+        quantity: 0, 
+        packingSize: Number(quickDrug.packingSize) || 1,
+        category: 'other',
+        genericName: quickDrug.name,
+        manufacturer: quickDrug.manufacturer || 'غير محدد',
+        dosage: 'N/A',
+        dosageForm: 'Other',
+        batchNumber: 'N/A',
+        expiryDate: new Date(new Date().setFullYear(new Date().getFullYear() + 2)).toISOString()
+      });
       const newDrug = res.data.data.drug;
       
       // Update local drugs list
