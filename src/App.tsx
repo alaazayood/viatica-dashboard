@@ -16,6 +16,8 @@ import Returns from './pages/Returns';
 import FeedManagement from './pages/FeedManagement';
 import Alerts from './pages/Alerts';
 import Expenses from './pages/Expenses';
+import Purchases from './pages/Purchases';
+import Suppliers from './pages/Suppliers';
 
 // Protected Route Wrapper
 const ProtectedRoute = () => {
@@ -51,6 +53,8 @@ function App() {
               <Route path="feed" element={<FeedManagement />} />
               <Route path="alerts" element={<Alerts />} />
               <Route path="expenses" element={<Expenses />} />
+              <Route path="purchases" element={<Purchases />} />
+              <Route path="suppliers" element={<Suppliers />} />
               {/* Add other protected routes here */}
               <Route path="*" element={<div className="p-10 text-center">جاري العمل على هذه الصفحة...</div>} />
             </Route>

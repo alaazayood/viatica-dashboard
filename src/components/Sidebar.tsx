@@ -14,7 +14,9 @@ import {
   RotateCcw,
   Activity,
   ShieldAlert,
-  Receipt
+  Receipt,
+  PackagePlus,
+  Building2
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
@@ -44,6 +46,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     { icon: Activity, label: 'نبض المنصة', path: '/feed', roles: ['admin', 'warehouse'] },
     { icon: ShieldAlert, label: 'التنبيهات', path: '/alerts', roles: ['admin', 'warehouse'] },
     { icon: Receipt, label: 'المصاريف', path: '/expenses', roles: ['admin', 'warehouse'] },
+    { icon: Building2, label: 'الموردين', path: '/suppliers', roles: ['warehouse'] },
+    { icon: PackagePlus, label: 'المشتريات', path: '/purchases', roles: ['warehouse'] },
     { icon: Bell, label: 'الإشعارات', path: '/notifications', roles: ['admin', 'warehouse'] },
   ];
 
