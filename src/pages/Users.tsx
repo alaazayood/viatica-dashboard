@@ -262,6 +262,16 @@ const Users = () => {
     }
   };
 
+  const handleDeleteUser = async (userId: string) => {
+    if (!window.confirm('هل أنت متأكد من حذف هذا الحساب نهائياً؟ لا يمكن التراجع عن هذه العملية!')) return;
+    try {
+      await api.delete(`/users/${userId}`);
+      fetchUsers();
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'فشل الحذف');
+    }
+  };
+
   const handleAIScan = (userId: string) => {
     setScanningId(userId);
     setAiInsight(prev => ({ ...prev, [userId]: 'جاري الفحص ذكياً...' }));
@@ -441,6 +451,32 @@ const Users = () => {
                       </button>
                     </>
                   )}
+                  {user.status === 'verified' && (
+                    <button
+                      onClick={() => handleStatusUpdate(user._id, 'suspended')}
+                      className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-amber-200 text-amber-600 bg-white text-xs font-black hover:bg-amber-50 transition-all"
+                      title="إيقاف حساب المستودع مؤقتاً"
+                    >
+                      <AlertCircle className="w-3.5 h-3.5" />
+                      تعليق
+                    </button>
+                  )}
+                  {user.status === 'suspended' && (
+                    <button
+                      onClick={() => handleStatusUpdate(user._id, 'verified')}
+                      className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-500 text-white text-xs font-black hover:bg-emerald-600 transition-all shadow-sm"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      فك التعليق
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDeleteUser(user._id)}
+                    className="flex items-center justify-center p-2.5 rounded-xl text-rose-400 hover:text-white hover:bg-rose-500 transition-all"
+                    title="حذف المستودع نهائياً"
+                  >
+                    <UserX className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             );
