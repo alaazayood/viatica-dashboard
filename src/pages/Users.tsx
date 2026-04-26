@@ -337,24 +337,6 @@ const Users = () => {
 
       {/* Action Bar */}
       <div className="flex justify-end gap-3">
-        {selectedRole === 'warehouse' && (
-          <button 
-            onClick={async () => {
-              if(!window.confirm('هل أنت متأكد من حقن بيانات وهمية للمستودع الأول؟')) return;
-              try {
-                await api.post('/admin/seed-demo');
-                alert('تم حقن البيانات بنجاح!');
-              } catch(e: any) {
-                alert(e.response?.data?.message || 'فشل الحقن');
-              }
-            }}
-            className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-bold hover:bg-amber-600 transition-all shadow-md"
-            title="حقن بيانات الديمو الوهمية (أدوية، فواتير، الخ)"
-          >
-            <Package className="w-4 h-4" />
-            حقن بيانات ديمو
-          </button>
-        )}
         {selectedRole !== 'pharmacist' && (
           <button 
             onClick={() => setIsModalOpen(true)}
