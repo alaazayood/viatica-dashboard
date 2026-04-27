@@ -93,6 +93,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             onClick={() => onClose && onClose()}
             key={item.path}
             to={item.path}
+            end={item.path === '/app'}
             className={({ isActive }) =>
               cn(
                 "flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 text-sm font-bold tracking-wide group",
