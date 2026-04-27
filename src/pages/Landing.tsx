@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import api from '../services/api';
 import { 
   ArrowLeft, 
   ShieldCheck, 
@@ -26,8 +28,28 @@ const FeatureCard = ({ icon: Icon, title, desc }: any) => (
 );
 
 export default function Landing() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, login } = useAuth();
+  const navigate = useNavigate();
+  const [loadingDemo, setLoadingDemo] = useState(false);
   const phoneNumber = "0966262458";
+
+  const handleDemoLogin = async () => {
+    if (isAuthenticated) {
+      navigate('/app');
+      return;
+    }
+    try {
+      setLoadingDemo(true);
+      const response = await api.post('/auth/login', { email: 'demo@viatica.com', password: 'demo123' });
+      login(response.data.token, response.data.data.user);
+      navigate('/app');
+    } catch (err) {
+      console.error('Demo login failed', err);
+      navigate('/login');
+    } finally {
+      setLoadingDemo(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#030712] text-white selection:bg-indigo-500/30 overflow-x-hidden font-sans" dir="rtl">
@@ -94,13 +116,14 @@ export default function Landing() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link
-              to={isAuthenticated ? '/app' : '/login'}
-              className="w-full sm:w-auto px-12 py-6 rounded-full bg-indigo-600 text-white font-black text-xl hover:bg-indigo-500 shadow-[0_0_60px_rgba(79,70,229,0.4)] hover:-translate-y-1 transition-all flex items-center justify-center gap-3 group"
+            <button
+              onClick={handleDemoLogin}
+              disabled={loadingDemo}
+              className="w-full sm:w-auto px-12 py-6 rounded-full bg-indigo-600 text-white font-black text-xl hover:bg-indigo-500 shadow-[0_0_60px_rgba(79,70,229,0.4)] hover:-translate-y-1 transition-all flex items-center justify-center gap-3 group disabled:opacity-70 disabled:cursor-wait"
             >
-              ابدأ تجربتك فوراً
-              <Zap className="w-6 h-6 fill-white group-hover:scale-110 transition-transform" />
-            </Link>
+              {loadingDemo ? 'جاري الدخول للديمو...' : 'ابدأ تجربتك فوراً'}
+              {!loadingDemo && <Zap className="w-6 h-6 fill-white group-hover:scale-110 transition-transform" />}
+            </button>
             <a 
               href="#contact"
               className="w-full sm:w-auto px-12 py-6 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-white font-black text-xl hover:bg-white/10 transition-all flex items-center justify-center gap-3"
