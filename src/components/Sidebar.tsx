@@ -33,23 +33,24 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   // Role-based navigation
   const allNavItems = [
-    { icon: LayoutDashboard, label: 'الرئيسية', path: '/', roles: ['admin', 'warehouse'] },
-    { icon: Store, label: 'نقطة بيع (POS)', path: '/pos', roles: ['warehouse'] },
-    { icon: ShoppingCart, label: 'الطلبات والورديات', path: '/orders', roles: ['admin', 'warehouse'] },
-    { icon: UsersIcon, label: 'المستخدمين', path: '/users', roles: ['admin'] },
-    { icon: Package, label: 'المخزون', path: '/inventory', roles: ['admin', 'warehouse'] },
-    { icon: Tag, label: 'العروض', path: '/offers', roles: ['admin', 'warehouse'] },
-    { icon: User, label: 'الملف الشخصي', path: '/warehouse/me', roles: ['warehouse'] },
-    { icon: DollarSign, label: 'الحسابات المالية', path: '/finance', roles: ['warehouse'] },
-    { icon: BarChart3, label: 'التقارير والمبيعات', path: '/reports', roles: ['warehouse'] },
-    { icon: Activity, label: 'الأرباح والخسائر', path: '/profit-loss', roles: ['warehouse', 'admin'] },
-    { icon: RotateCcw, label: 'المرتجعات', path: '/returns', roles: ['warehouse'] },
-    { icon: Activity, label: 'نبض المنصة', path: '/feed', roles: ['admin', 'warehouse'] },
-    { icon: ShieldAlert, label: 'التنبيهات', path: '/alerts', roles: ['admin', 'warehouse'] },
-    { icon: Receipt, label: 'المصاريف', path: '/expenses', roles: ['admin', 'warehouse'] },
-    { icon: Building2, label: 'الموردين', path: '/suppliers', roles: ['warehouse'] },
-    { icon: PackagePlus, label: 'المشتريات', path: '/purchases', roles: ['warehouse'] },
-    { icon: Bell, label: 'الإشعارات', path: '/notifications', roles: ['admin', 'warehouse'] },
+    { icon: LayoutDashboard, label: 'الرئيسية', path: '/app', roles: ['admin', 'warehouse'] },
+    { icon: Store, label: 'نقطة بيع (POS)', path: '/app/pos', roles: ['warehouse'] },
+    { icon: ShoppingCart, label: 'الطلبات والورديات', path: '/app/orders', roles: ['admin', 'warehouse'] },
+    { icon: UsersIcon, label: 'المستخدمين', path: '/app/users', roles: ['admin'] },
+    { icon: Package, label: 'المخزون', path: '/app/inventory', roles: ['admin', 'warehouse'] },
+    { icon: Activity, label: 'سجل الحركات', path: '/app/stock-movements', roles: ['admin', 'warehouse'] },
+    { icon: Tag, label: 'العروض', path: '/app/offers', roles: ['admin', 'warehouse'] },
+    { icon: User, label: 'الملف الشخصي', path: '/app/warehouse/me', roles: ['warehouse'] },
+    { icon: DollarSign, label: 'الحسابات المالية', path: '/app/finance', roles: ['warehouse'] },
+    { icon: BarChart3, label: 'التقارير والمبيعات', path: '/app/reports', roles: ['warehouse'] },
+    { icon: Activity, label: 'الأرباح والخسائر', path: '/app/profit-loss', roles: ['warehouse', 'admin'] },
+    { icon: RotateCcw, label: 'المرتجعات', path: '/app/returns', roles: ['warehouse'] },
+    { icon: Activity, label: 'نبض المنصة', path: '/app/feed', roles: ['admin', 'warehouse'] },
+    { icon: ShieldAlert, label: 'التنبيهات', path: '/app/alerts', roles: ['admin', 'warehouse'] },
+    { icon: Receipt, label: 'المصاريف', path: '/app/expenses', roles: ['admin', 'warehouse'] },
+    { icon: Building2, label: 'الموردين', path: '/app/suppliers', roles: ['warehouse'] },
+    { icon: PackagePlus, label: 'المشتريات', path: '/app/purchases', roles: ['warehouse'] },
+    { icon: Bell, label: 'الإشعارات', path: '/app/notifications', roles: ['admin', 'warehouse'] },
   ];
 
   const navItems = allNavItems.filter(item => 
@@ -74,7 +75,10 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         isOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
       )}>
       <div className="p-6 border-b border-white/10 flex flex-col items-center justify-center gap-1.5 shrink-0">
-        <h1 className="text-3xl font-black tracking-tighter gradient-text">VIATICA</h1>
+        <div className="w-14 h-14 rounded-2xl overflow-hidden shadow-lg border border-white/10 mb-2">
+            <img src="/viatica_logo.jpeg" alt="Logo" className="w-full h-full object-cover" />
+        </div>
+        <h1 className="text-xl font-black tracking-tighter gradient-text">VIATICA</h1>
         <div className="px-3 py-0.5 bg-indigo-500/10 rounded-full border border-indigo-500/20">
            <p className="text-[10px] font-black uppercase tracking-widest text-indigo-500">{roleLabel}</p>
         </div>
@@ -104,7 +108,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </div>
             
             {/* Notification Badge for Orders Tab */}
-            {item.path === '/orders' && unreadOrderNotificationsCount > 0 && (
+            {item.path === '/app/orders' && unreadOrderNotificationsCount > 0 && (
               <span className="flex items-center justify-center w-5 h-5 bg-rose-500 text-white text-[9px] font-black rounded-md shadow-lg shrink-0">
                 {unreadOrderNotificationsCount}
               </span>

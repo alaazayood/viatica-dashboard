@@ -26,7 +26,7 @@ const Login = () => {
       const { token, data } = response.data;
       
       login(token, data.user);
-      navigate('/');
+      navigate('/app');
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.message || 'فشل تسجيل الدخول. يرجى التحقق من البيانات.');
@@ -40,8 +40,11 @@ const Login = () => {
       <div className="w-full max-w-md bg-card rounded-xl shadow-lg border border-border overflow-hidden">
         <div className="p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-primary mb-2">Viatica</h1>
-            <p className="text-muted-foreground">لوحة تحكم الإدارة والمخازن</p>
+            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden shadow-lg border border-border">
+                <img src="/viatica_logo.jpeg" alt="Logo" className="w-full h-full object-cover" />
+            </div>
+            <h1 className="text-3xl font-black text-primary mb-1 tracking-tight">Viatica</h1>
+            <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest">لوحة تحكم الإدارة والمخازن</p>
           </div>
 
           {error && (
