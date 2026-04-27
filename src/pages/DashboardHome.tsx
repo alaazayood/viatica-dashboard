@@ -188,7 +188,7 @@ const DashboardHome = () => {
             <span className="w-1.5 h-5 bg-amber-500 rounded-full" />
             آخر العمليات
           </h2>
-          <a href="/orders" className="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-1">
+          <a href="/app/orders" className="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-1">
             عرض الكل <ArrowUpRight className="w-3 h-3" />
           </a>
         </div>

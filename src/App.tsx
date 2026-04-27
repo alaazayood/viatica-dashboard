@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import MainLayout from './layouts/MainLayout';
 import DashboardHome from './pages/DashboardHome';
 import Login from './pages/Login';
+import Landing from './pages/Landing';
 import Inventory from './pages/Inventory';
 import Orders from './pages/Orders';
 import OrderDetails from './pages/OrderDetails';
@@ -19,6 +20,7 @@ import Expenses from './pages/Expenses';
 import Purchases from './pages/Purchases';
 import Suppliers from './pages/Suppliers';
 import ProfitLoss from './pages/ProfitLoss';
+import StockMovements from './pages/StockMovements';
 
 // Protected Route Wrapper
 const ProtectedRoute = () => {
@@ -36,10 +38,11 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<MainLayout />}>
+            <Route path="/app" element={<MainLayout />}>
               <Route index element={<DashboardHome />} />
               <Route path="inventory" element={<Inventory />} />
               <Route path="orders" element={<Orders />} />
@@ -57,6 +60,7 @@ function App() {
               <Route path="purchases" element={<Purchases />} />
               <Route path="suppliers" element={<Suppliers />} />
               <Route path="profit-loss" element={<ProfitLoss />} />
+              <Route path="stock-movements" element={<StockMovements />} />
               {/* Add other protected routes here */}
               <Route path="*" element={<div className="p-10 text-center">جاري العمل على هذه الصفحة...</div>} />
             </Route>
